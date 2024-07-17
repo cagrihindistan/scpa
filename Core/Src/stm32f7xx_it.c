@@ -33,7 +33,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+#define ARR_Value 10800
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -47,7 +47,10 @@ extern uint8_t USB_TX_Buf[50];
 extern FLOATUNION_t data1_send;
 extern FLOATUNION_t data2_send;
 extern float time;
-
+extern uint16_t CCR_Value;
+extern uint16_t Duty_Cycle;
+extern float Voltage;
+extern float temperature_t;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -62,6 +65,7 @@ extern float time;
 
 /* External variables --------------------------------------------------------*/
 extern PCD_HandleTypeDef hpcd_USB_OTG_FS;
+extern TIM_HandleTypeDef htim1;
 extern TIM_HandleTypeDef htim5;
 /* USER CODE BEGIN EV */
 
@@ -206,6 +210,22 @@ void SysTick_Handler(void)
 /******************************************************************************/
 
 /**
+  * @brief This function handles TIM1 update interrupt and TIM10 global interrupt.
+  */
+void TIM1_UP_TIM10_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM1_UP_TIM10_IRQn 0 */
+	//Duty_Cycle = Voltage * 10.0
+	CCR_Value = (Voltage*10.0*ARR_Value)/100.0;
+	TIM1 -> CCR1 = (uint32_t) CCR_Value; // format et
+  /* USER CODE END TIM1_UP_TIM10_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim1);
+  /* USER CODE BEGIN TIM1_UP_TIM10_IRQn 1 */
+
+  /* USER CODE END TIM1_UP_TIM10_IRQn 1 */
+}
+
+/**
   * @brief This function handles TIM5 global interrupt.
   */
 void TIM5_IRQHandler(void)
@@ -215,6 +235,7 @@ void TIM5_IRQHandler(void)
 
 
 	data1_send.number=time;
+	data2_send.number = temperature_t;
 
 
 

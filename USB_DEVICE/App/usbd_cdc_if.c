@@ -114,6 +114,7 @@ extern uint8_t USB_RX_Buf[50];
 extern FLOATUNION_t data1_rec;
 extern FLOATUNION_t data2_rec;
 extern uint8_t usb_read_error;
+extern float Voltage;
 
 /* USER CODE END EXPORTED_VARIABLES */
 
@@ -289,6 +290,8 @@ static int8_t CDC_Receive_FS(uint8_t* Buf, uint32_t *Len)
 	  usb_read_error++;
   }
   memset(Buf, '\0', len);   // clear the Buf also
+
+ Voltage = data1_rec.number;
 
 
 
